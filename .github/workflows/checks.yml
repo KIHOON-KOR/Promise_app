@@ -1,0 +1,164 @@
+# 깃허브 액션 탭에서 이 자동화 작업이 어떤 이름으로 보일지 결정합니다.
+name: Code Quality Checks & Tests
+
+# 이 자동화 스크립트가 언제 스스로 작동해야 하는지 조건을 설정하는 구역입니다.
+on:
+  # 누군가 자신이 짠 코드를 메인 코드에 합쳐달라고 요청(PR)을 올렸을 때 발동하게 합니다.
+  pull_request:
+    # 모든 요청이 아니라, 아래 지정된 중요한 브랜치로 들어올 때만 작동하게 제한합니다.
+    branches:
+      # 실제 서비스로 배포되는 main 브랜치로 향하는 요청일 때 검사를 수행합니다.
+      - "main"
+      # 개발 테스트용인 develop 브랜치로 향하는 요청일 때 검사를 수행합니다.
+      - "develop"
+
+# 아래에 정의될 모든 작업 단계에서 공통으로 쓰일 전역 환경 변수를 선언합니다.
+env:
+  # 봇이 검사를 수행할 때 에러가 나지 않도록 가짜 아마존 접속 키를 부여합니다.
+  AWS_ACCESS_KEY_ID: "dummy"
+  # 봇이 사용할 가짜 비밀 키를 부여하여 코드가 도중에 멈추지 않게 방지합니다.
+  AWS_SECRET_ACCESS_KEY: "dummy"
+  # 봇이 참고할 가짜 클라우드 저장소 이름을 지정해 줍니다.
+  AWS_STORAGE_BUCKET_NAME: "dummy"
+  # 장고 프레임워크가 무조건 우리의 설정 파일(config.settings)을 바라보고 켜지도록 강제합니다.
+  DJANGO_SETTINGS_MODULE: "config.settings"
+
+# 조건이 만족되었을 때 깃허브 서버(가상 머신)가 순서대로 수행할 작업들의 목록입니다.
+jobs:
+  # 코드 스타일과 문법을 검사하는 첫 번째 작업 그룹의 이름을 'ci'로 명명합니다.
+  ci:
+    # 이 작업 그룹을 깃허브가 제공하는 가장 최신 버전의 우분투 리눅스 컴퓨터에서 실행합니다.
+    runs-on: ubuntu-latest
+    # 'ci' 작업 그룹 안에서 하나씩 차례대로 실행될 구체적인 행동(단계)들입니다.
+    steps:
+      # 깃허브 저장소에 올라와 있는 우리 프로젝트 코드를 가상 머신 안으로 다운로드받습니다.
+      - name: Checkout code
+        # 깃허브 공식 코드 다운로드 프로그램(액션) v3 버전을 가져다 씁니다.
+        uses: actions/checkout@v3
+
+      # 우리가 코드를 짤 때 썼던 것과 똑같은 파이썬 환경을 가상 머신에 세팅합니다.
+      - name: Set up Python
+        # 깃허브 공식 파이썬 설치 프로그램 v4 버전을 사용합니다.
+        uses: actions/setup-python@v4
+        # 파이썬 버전을 우리가 사용하는 3.12로 정확하게 지정해 줍니다.
+        with:
+          python-version: "3.12"
+
+      # 봇 컴퓨터에 의존성 관리 도구인 Poetry를 설치하는 단계입니다.
+      - name: Install Poetry
+        # 공식 웹사이트에서 설치 파일을 받아 실행하고, 시스템 경로에 등록하여 봇이 명령어를 알아듣게 합니다.
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+
+      # 매번 패키지를 다운받으면 오래 걸리므로 기존 설치본을 기억해두는 캐시 단계입니다.
+      - name: Cache Poetry dependencies
+        # 다른 단계에서 이 결과를 물어볼 수 있도록 'cache-venv'라는 이름표를 붙여줍니다.
+        id: cache-venv
+        # 깃허브 공식 캐시 저장 프로그램 v3 버전을 사용합니다.
+        uses: actions/cache@v3
+        # 패키지 명세서의 암호화된 값을 열쇠로 삼아 가상환경 폴더를 통째로 저장하거나 불러옵니다.
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: python-3.12-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            python-3.12-poetry-
+
+      # 위에서 캐시를 찾지 못했을 경우에만 패키지들을 실제로 다운로드하고 설치합니다.
+      - name: Install dependencies
+        # 이전 단계의 결과가 '실패(캐시 없음)'일 때만 이 명령어를 실행하도록 조건을 겁니다.
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        # 프로젝트 폴더 자체는 빼고 명세서에 적힌 도구들만 봇 컴퓨터에 설치합니다.
+        run: poetry install --no-root
+
+      # 데이터베이스 비밀번호 등이 담겨야 할 임시 환경 변수 파일(.env)을 봇 컴퓨터에 만들어줍니다.
+      - name: Create .env file
+        # 깃허브 보안 저장소에 숨겨둔 텍스트를 가져와서 .env 파일 안에 쏟아붓습니다.
+        run: |
+          echo "${{ secrets.DJANGO_ENVS }}" > .env
+
+      # 불필요한 코드나 파이썬 문법 오류가 없는지 빠르게 검사하는 단계입니다.
+      - name: Run Ruff (Lint & Import Sorting)
+        # 가상환경 안에서 ruff를 실행하여 프로젝트 전체를 매서운 눈으로 검사하게 합니다.
+        run: poetry run ruff check .
+
+      # 개발자마다 다른 띄어쓰기나 줄바꿈 스타일이 규칙에 맞는지 확인하는 단계입니다.
+      - name: Run Black (Code Formatting)
+        # 코드를 실제로 고치지는 말고(--check), 규칙을 어긴 곳이 있으면 에러를 내서 알려주게 합니다.
+        run: poetry run black . --check
+
+      # 변수나 함수에 엉뚱한 종류의 데이터가 들어가지 않는지 정밀하게 자료형을 검사합니다.
+      - name: Run Mypy (Type Checking)
+        # mypy를 켜고 프로젝트 전체 코드를 꼼꼼히 분석하도록 지시합니다.
+        run: poetry run mypy .
+
+  # 문법 검사가 끝난 뒤, 우리가 짠 코드가 잘 동작하는지 가짜 데이터로 시뮬레이션 하는 두 번째 작업 그룹입니다.
+  test:
+    # 앞선 'ci' 작업이 성공적으로 에러 없이 끝났을 때만 이 테스트 작업을 시작하도록 조건을 겁니다.
+    needs: ci
+    # 이 작업 역시 가장 최신 버전의 우분투 리눅스 컴퓨터를 새로 빌려서 실행합니다.
+    runs-on: ubuntu-latest
+    # 테스트 코드를 돌릴 때 백그라운드에서 켜져 있어야 하는 보조 프로그램(DB 등)들을 띄워줍니다.
+    services:
+      # 'db'라는 이름으로 포스트그레SQL 데이터베이스 15 버전 보조 컨테이너를 켭니다.
+      db:
+        image: postgres:15
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: blog_user
+          POSTGRES_PASSWORD: blog_password
+          POSTGRES_DB: blog_db_dev
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      # 임시 데이터 저장을 위해 'redis'라는 이름의 최신 버전 캐시 서버 컨테이너도 켭니다.
+      redis:
+        image: redis:latest
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 5
+
+    # 'test' 작업 그룹 내에서 순서대로 진행될 코드 다운로드 및 테스트 실행 과정입니다.
+    steps:
+      # 새로운 봇 컴퓨터를 배정받았으므로 다시 한번 프로젝트 코드를 다운로드합니다.
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 새로운 봇 컴퓨터에 동일하게 파이썬 3.12를 세팅해 줍니다.
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      # 의존성 관리 도구인 Poetry를 한 번 더 설치하고 시스템 경로에 등록합니다.
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+
+      # 앞선 'ci' 작업에서 만들어둔 캐시가 있다면 이 단계에서 쏙 빼와서 설치 시간을 대폭 줄입니다.
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: python-3.12-poetry-${{ hashFiles('**/poetry.lock') }}
+
+      # 불러온 캐시를 바탕으로 필요한 패키지들을 단숨에 설치합니다.
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      # 테스트 시에도 설정 파일이 필요하므로 보안 텍스트를 가져와 임시 환경 변수 파일을 만듭니다.
+      - name: Create .env file
+        run: echo "${{ secrets.DJANGO_ENVS }}" > .env
+
+      # 테스트를 진행하기 전, 뼈대 코드를 바탕으로 빈 데이터베이스에 실제 테이블(표)들을 만들어줍니다.
+      - name: Run Django Migration
+        # 장고의 마이그레이션 명령어를 실행하여 DB 스키마를 동기화합니다.
+        run: poetry run python manage.py migrate
+
+      # 개발자가 작성해 둔 시나리오대로 코드가 잘 돌아가는지 테스트하고 커버리지를 측정합니다.
+      - name: Run Tests & Coverage
+        # 커버리지 측정 도구를 켠 상태로 테스트를 돌리고, 그 결과를 터미널 화면에 상세히 출력합니다.
+        run: |
+          poetry run coverage run --source='.' manage.py test
+          echo "Total Coverage Report:"
+          poetry run coverage report -m
