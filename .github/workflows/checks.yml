@@ -123,11 +123,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 새로운 봇 컴퓨터에 동일하게 파이썬 3.12를 세팅해 줍니다.
+      # 새로운 봇 컴퓨터에 동일하게 파이썬 3.13를 세팅해 줍니다.
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       # 의존성 관리 도구인 Poetry를 한 번 더 설치하고 시스템 경로에 등록합니다.
       - name: Install Poetry
@@ -140,7 +140,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pypoetry/virtualenvs
-          key: python-3.12-poetry-${{ hashFiles('**/poetry.lock') }}
+          key: python-3.13-poetry-${{ hashFiles('**/poetry.lock') }}
 
       # 불러온 캐시를 바탕으로 필요한 패키지들을 단숨에 설치합니다.
       - name: Install dependencies
