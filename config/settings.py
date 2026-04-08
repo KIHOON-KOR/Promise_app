@@ -39,8 +39,7 @@ DJANGO_APPS = [  # 장고 프레임워크가 기본으로 제공하는 앱 목�
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = [  # 외부에서 설치한 라이브러리 앱들입니다.
-]
+THIRD_PARTY_APPS = []  # 외부에서 설치한 라이브러리 앱들입니다.
 
 CUSTOM_APPS = [
     "apps.User",
@@ -50,9 +49,7 @@ CUSTOM_APPS = [
     "apps.PlaceCandidate",
 ]
 
-INSTALLED_APPS = (
-    DJANGO_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
-)
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
