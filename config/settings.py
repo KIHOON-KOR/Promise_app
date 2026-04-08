@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-q*a%gpy*v964a@o-ovx1zzlt8wh)!b_q1_t#&c#litaqs!!isi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list[str] = []
 
 
 # Application definition
@@ -39,7 +39,7 @@ DJANGO_APPS = [  # 장고 프레임워크가 기본으로 제공하는 앱 목�
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = []  # 외부에서 설치한 라이브러리 앱들입니다.
+THIRD_PARTY_APPS: list[str] = []  # 외부에서 설치한 라이브러리 앱들입니다.
 
 CUSTOM_APPS = [
     "apps.User",

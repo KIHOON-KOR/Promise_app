@@ -20,4 +20,15 @@ build-backend = "poetry.core.masonry.api"
 black = "^26.3.1"
 ruff = "^0.15.8"
 mypy = "^1.20.0"
+django-stubs = "^6.0.2"
 
+
+# mypy 도구에 대한 전반적인 설정을 시작하는 섹션
+[tool.mypy]
+# mypy가 사용할 외부 플러그인 목록에 장고 플러그인을 지정하여 활성화함
+plugins = ["mypy_django_plugin.main"]
+
+# mypy 장고 플러그인을 위한 세부 설정을 시작하는 섹션
+[tool.django-stubs]
+# 장고 프로젝트의 전반적인 환경 설정 파일이 어디에 있는지 경로를 알려줌
+django_settings_module = "config.settings"
