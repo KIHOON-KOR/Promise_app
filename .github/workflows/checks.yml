@@ -40,9 +40,9 @@ jobs:
       - name: Set up Python
         # 깃허브 공식 파이썬 설치 프로그램 v4 버전을 사용합니다.
         uses: actions/setup-python@v4
-        # 파이썬 버전을 우리가 사용하는 3.12로 정확하게 지정해 줍니다.
+        # 파이썬 버전을 우리가 사용하는 3.13로 정확하게 지정해 줍니다.
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       # 봇 컴퓨터에 의존성 관리 도구인 Poetry를 설치하는 단계입니다.
       - name: Install Poetry
@@ -60,9 +60,9 @@ jobs:
         # 패키지 명세서의 암호화된 값을 열쇠로 삼아 가상환경 폴더를 통째로 저장하거나 불러옵니다.
         with:
           path: ~/.cache/pypoetry/virtualenvs
-          key: python-3.12-poetry-${{ hashFiles('**/poetry.lock') }}
+          key: python-3.13-poetry-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
-            python-3.12-poetry-
+            python-3.13-poetry-
 
       # 위에서 캐시를 찾지 못했을 경우에만 패키지들을 실제로 다운로드하고 설치합니다.
       - name: Install dependencies
