@@ -24,6 +24,7 @@ django-stubs = "^6.0.2"
 
 
 # mypy 도구에 대한 전반적인 설정을 시작하는 섹션
+coverage = "^7.13.5"
 [tool.mypy]
 # mypy가 사용할 외부 플러그인 목록에 장고 플러그인을 지정하여 활성화함
 plugins = ["mypy_django_plugin.main"]
