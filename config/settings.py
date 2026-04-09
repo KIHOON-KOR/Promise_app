@@ -127,3 +127,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+# 장고의 기본 인증 모델 대신 만든 User 앱의 User 모델을 사용하도록 지정
+AUTH_USER_MODEL = "User.User"
