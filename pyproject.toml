@@ -33,3 +33,7 @@ plugins = ["mypy_django_plugin.main"]
 [tool.django-stubs]
 # 장고 프로젝트의 전반적인 환경 설정 파일이 어디에 있는지 경로를 알려줌
 django_settings_module = "config.settings"
+
+[tool.black]
+# Black이 코드를 포맷팅할 때 파이썬 3.13 버전을 기준으로 동작하도록 영구적으로 설정
+target-version = ['py313']
