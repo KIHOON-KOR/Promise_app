@@ -105,9 +105,9 @@ jobs:
         image: postgres:15
         ports: ["5432:5432"]
         env:
-          POSTGRES_USER: blog_user
-          POSTGRES_PASSWORD: blog_password
-          POSTGRES_DB: blog_db_dev
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: your_secret_password
+          POSTGRES_DB: promise_db
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       # 임시 데이터 저장을 위해 'redis'라는 이름의 최신 버전 캐시 서버 컨테이너도 켭니다.
