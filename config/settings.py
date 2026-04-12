@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-q*a%gpy*v964a@o-ovx1zzlt8wh)!b_q1_t#&c#litaqs!!isi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: list[str] = ["localhost", "127.0.0.1", "0.0.0.0"]
 
 
 # Application definition
@@ -40,7 +40,10 @@ DJANGO_APPS = [  # 장고 프레임워크가 기본으로 제공하는 앱 목�
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS: list[str] = []  # 외부에서 설치한 라이브러리 앱들입니다.
+THIRD_PARTY_APPS: list[str] = [
+    "rest_framework",
+    "drf_spectacular",
+]  # 외부에서 설치한 라이브러리 앱들입니다.
 
 CUSTOM_APPS = [
     "apps.User",
@@ -139,3 +142,26 @@ STATIC_URL = "static/"
 
 # 장고의 기본 인증 모델 대신 만든 User 앱의 User 모델을 사용하도록 지정
 AUTH_USER_MODEL = "User.User"
+
+# 장고 레스트 프레임워크의 전역적인 작동 방식을 세밀하게 제어하는 설정 딕셔너리
+REST_FRAMEWORK = {
+    # API 구조를 분석할 때 기본 도구 대신 스펙타큘러의 꼼꼼한 분석 도구를 최우선으로 사용하도록 강제
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# 스웨거 웹 페이지 화면 상단에 노출될 프로젝트의 간판 정보들을 설정하는 딕셔너리
+SPECTACULAR_SETTINGS = {
+    # 완성된 스웨거 문서의 가장 눈에 띄는 곳에 표시될 공식 서비스 이름을 지정
+    "TITLE": "Promise App API",
+    "DESCRIPTION": "약속 잡기 어플리케이션을 위한 백엔드 API 명세서입니다.",
+    # 현재 API의 버전을 숫자로 명시하여 나중에 기능이 크게 변경되었을 때 헷갈리지 않도록 돕기
+    "VERSION": "1.0.0",
+}
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"  # 정적 파일들이 모일 폴더 위치를 지정합니다.
+
+# Media files (사용자가 업로드하는 파일들)
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"  # 사용자가 업로드한 파일이 저장될 위치를 지정합니다.
