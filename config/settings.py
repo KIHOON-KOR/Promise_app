@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -85,13 +86,17 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'promise_db'), # 운영체제 환경변수에서 값을 꺼내옵니다.
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'your_secret_password'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'promise_db'), # docker-compose에서 설정한 HOST를 바라봅니다.
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get(
+            "POSTGRES_DB", "promise_db"
+        ),  # 운영체제 환경변수에서 값을 꺼내옵니다.
+        "USER": os.environ.get("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "your_secret_password"),
+        "HOST": os.environ.get(
+            "POSTGRES_HOST", "promise_db"
+        ),  # docker-compose에서 설정한 HOST를 바라봅니다.
+        "PORT": "5432",
     }
 }
 
