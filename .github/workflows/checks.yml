@@ -105,9 +105,9 @@ jobs:
         image: postgres:15
         ports: ["5432:5432"]
         env:
-          POSTGRES_USER: blog_user
-          POSTGRES_PASSWORD: blog_password
-          POSTGRES_DB: blog_db_dev
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: your_secret_password
+          POSTGRES_DB: promise_db
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       # 임시 데이터 저장을 위해 'redis'라는 이름의 최신 버전 캐시 서버 컨테이너도 켭니다.
@@ -152,11 +152,15 @@ jobs:
 
       # 테스트를 진행하기 전, 뼈대 코드를 바탕으로 빈 데이터베이스에 실제 테이블(표)들을 만들어줍니다.
       - name: Run Django Migration
+        env: # 장고가 로컬호스트의 데이터베이스를 찾을 수 있도록 주소를 직접 주입합니다.
+          POSTGRES_HOST: localhost # 로컬호스트 주소를 덮어씌웁니다.
         # 장고의 마이그레이션 명령어를 실행하여 DB 스키마를 동기화합니다.
         run: poetry run python manage.py migrate
 
       # 개발자가 작성해 둔 시나리오대로 코드가 잘 돌아가는지 테스트하고 커버리지를 측정합니다.
       - name: Run Tests & Coverage
+        env: # 테스트 중에도 데이터베이스를 잘 찾도록 주소를 주입합니다.
+          POSTGRES_HOST: localhost # 로컬호스트 주소를 덮어씌웁니다.
         # 커버리지 측정 도구를 켠 상태로 테스트를 돌리고, 그 결과를 터미널 화면에 상세히 출력합니다.
         run: |
           poetry run coverage run --source='.' manage.py test
