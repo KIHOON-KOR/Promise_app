@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. Django 백엔드 웹 서버
+  # ---------------------------------------------------------------------------
+  backend:
+    build: .
+    container_name: promise_backend
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env # 만든 .env 파일을 읽어옵니다.
+    environment:
+      - POSTGRES_HOST=promise_db # 아래 db 서비스의 컨테이너 이름과 똑같이 맞춰줍니다.
+    depends_on:
+      - db
+    networks:
+      - app_network
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  # ---------------------------------------------------------------------------
+  # 2. PostgreSQL 데이터베이스
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:15
+    container_name: promise_db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB} # .env 파일에서 POSTGRES_DB 값을 가져와 꽂아줍니다.
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+volumes:
+  postgres_data: # 데이터베이스 정보가 날아가지 않도록 저장 공간을 확보합니다.
+
+networks:
+  app_network:
+    driver: bridge # 컨테이너들끼리 통신할 수 있는 가상의 다리를 놓아줍니다.
