@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    nickname = models.CharField(max_length=50, unique=True)
+    nickname = models.CharField(max_length=50)
     push_enabled = models.BooleanField(default=True)
 
     # 파이썬 객체를 문자열로 표현할 때 호출되는 기본 메서드
