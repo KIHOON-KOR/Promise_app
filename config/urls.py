@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import URLPattern, URLResolver, path
+from django.urls import URLPattern, URLResolver, path, include
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
@@ -10,6 +10,7 @@ from django.conf.urls.static import static
 
 urlpatterns: list[URLPattern | URLResolver] = [
     path("admin/", admin.site.urls),
+    path("api/v1/user/", include("apps.User.urls")),
 ]
 
 
