@@ -5,6 +5,7 @@ from rest_framework import status
 from apps.User.serializers.login_serializer import UserLoginSerializer
 from apps.User.services.login_service import LoginService
 
+
 class UserLoginView(APIView):
     """클라이언트가 POST 방식으로 데이터를 전송할 때 실행되는 메서드"""
 
@@ -28,9 +29,9 @@ class UserLoginView(APIView):
                     # 로그인이 성공했다는 안내 문구
                     "message": "로그인에 성공했습니다.",
                     # 발급받은 액세스 토큰을 응답 본문에 포함
-                    "access": result['access'],
+                    "access": result["access"],
                     # 발급받은 리프레시 토큰을 응답 본문에 포함
-                    "refresh": result['refresh']
+                    "refresh": result["refresh"],
                 },
                 status=status.HTTP_200_OK,
             )

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class UserLoginSerializer(serializers.Serializer):
     # 아이디 입력을 검증하기 위한 문자열 필드
     username = serializers.CharField()
