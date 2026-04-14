@@ -145,8 +145,13 @@ AUTH_USER_MODEL = "User.User"
 
 # 장고 레스트 프레임워크의 전역적인 작동 방식을 세밀하게 제어하는 설정 딕셔너리
 REST_FRAMEWORK = {
-    # API 구조를 분석할 때 기본 도구 대신 스펙타큘러의 꼼꼼한 분석 도구를 최우선으로 사용하도록 강제
+    # 기존에 작성하신 스펙타큘러 자동화 스키마 설정
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # API 요청이 들어올 때 누구인지 확인하는 기본 인증 방식들을 지정
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # JWT 토큰을 해독하여 올바른 사용자인지 검증하는 라이브러리 클래스를 등록
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
 }
 
 # 스웨거 웹 페이지 화면 상단에 노출될 프로젝트의 간판 정보들을 설정하는 딕셔너리
