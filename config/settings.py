@@ -43,6 +43,8 @@ DJANGO_APPS = [  # 장고 프레임워크가 기본으로 제공하는 앱 목�
 THIRD_PARTY_APPS: list[str] = [
     "rest_framework",
     "drf_spectacular",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
 ]  # 외부에서 설치한 라이브러리 앱들입니다.
 
 CUSTOM_APPS = [
