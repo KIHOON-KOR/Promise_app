@@ -8,12 +8,10 @@ from django.utils import timezone
 
 class UserWithdrawalView(APIView):
     """회원 탈퇴 요청을 처리하기 위한 뷰 클래스"""
+
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(
-        tags=["회원관리"],
-        summary="회원탈퇴"
-    )
+    @extend_schema(tags=["회원관리"], summary="회원탈퇴")
     def delete(self, request):
         # 1. 액세스 토큰을 통해 신원이 확인된 사용자 객체를 요청 데이터에서 꺼내옴
         user = request.user
@@ -33,4 +31,7 @@ class UserWithdrawalView(APIView):
         # 6. 변경된 활성 상태 속성을 데이터베이스에 최종적으로 기록하고 저장
         user.save()
 
-        return Response({"message": "회원 탈퇴가 완료되었습니다."}, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": "회원 탈퇴가 완료되었습니다."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
