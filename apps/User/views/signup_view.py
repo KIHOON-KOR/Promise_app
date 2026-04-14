@@ -24,7 +24,11 @@ class UserSignupView(APIView):
         return Response(
             {
                 "message": "회원가입이 성공적으로 완료되었습니다.",
-                "user": {"id": user.id, "username": user.username, "nickname": user.nickname},
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "nickname": user.nickname,
+                },
             },
             status=status.HTTP_201_CREATED,
         )
