@@ -3,6 +3,7 @@ from apps.EventMember.models import EventMember
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
+
 class EventService:
     """약속 자체와 관련된 핵심 로직을 담당하는 서비스 클래스"""
 
@@ -19,6 +20,7 @@ class EventService:
         # 2. 방장 본인을 약속의 첫 번째 멤버로 등록하며, 초대 권한을 부여
         EventMember.objects.create(event=event, user=user, can_invite=True)
         return event
+
 
 class EventMemberService:
     """약속 내부의 참여자들을 관리하는 로직을 담당하는 서비스 클래스"""
