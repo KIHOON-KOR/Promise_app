@@ -40,3 +40,19 @@ class EventMemberService:
             EventMember.objects.create(event=event, user=target_user)
             return True
         return False
+
+    def grant_permission(event_id, target_user_id, request_user):
+        # 1. 전달받은 아이디로 약속을 찾고, 없으면 에러를 발생시킴
+        event = get_object_or_404(Event, id=event_id)
+        # 2. 이 기능은 오직 방장만 수행할 수 있도록 조건을 확인
+        if event.host == request_user:
+            # 권한을 받을 멤버의 정보를 찾아냄
+            target_member = get_object_or_404(
+                EventMember, event=event, user_id=target_user_id
+            )
+            # 멤버의 초대 권한 속성을 참으로 켜줌
+            target_member.can_invite = True
+            # 변경된 내용을 데이터베이스에 최종 저장
+            target_member.save()
+            return True
+        return False
