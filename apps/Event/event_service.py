@@ -64,7 +64,9 @@ class EventMemberService:
         # 2. 이 기능은 오직 방장만 수행할 수 있도록 조건을 확인
         if event.host == request_user:
             # 강퇴할 대상의 멤버십 정보를 찾음
-            target_member = get_object_or_404(EventMember, event=event, user_id=target_user_id)
+            target_member = get_object_or_404(
+                EventMember, event=event, user_id=target_user_id
+            )
             # 해당 멤버의 데이터를 데이터베이스에서 지움
             target_member.delete()
             return True
