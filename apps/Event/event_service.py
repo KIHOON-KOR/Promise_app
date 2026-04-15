@@ -56,3 +56,16 @@ class EventMemberService:
             target_member.save()
             return True
         return False
+
+    def kick_user(event_id, target_user_id, request_user):
+        """약속 방에서 특정 인원을 강제로 내보내는 메서드"""
+        # 1. 전달받은 아이디로 약속을 찾고, 없으면 에러를 발생시킴
+        event = get_object_or_404(Event, id=event_id)
+        # 2. 이 기능은 오직 방장만 수행할 수 있도록 조건을 확인
+        if event.host == request_user:
+            # 강퇴할 대상의 멤버십 정보를 찾음
+            target_member = get_object_or_404(EventMember, event=event, user_id=target_user_id)
+            # 해당 멤버의 데이터를 데이터베이스에서 지움
+            target_member.delete()
+            return True
+        return False
