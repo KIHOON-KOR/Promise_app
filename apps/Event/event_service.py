@@ -47,7 +47,9 @@ class EventMemberService:
         # 2. 이 기능은 오직 방장만 수행할 수 있도록 조건을 확인
         if event.host == request_user:
             # 권한을 받을 멤버의 정보를 찾아냄
-            target_member = get_object_or_404(EventMember, event=event, user_id=target_user_id)
+            target_member = get_object_or_404(
+                EventMember, event=event, user_id=target_user_id
+            )
             # 멤버의 초대 권한 속성을 참으로 켜줌
             target_member.can_invite = True
             # 변경된 내용을 데이터베이스에 최종 저장

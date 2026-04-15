@@ -9,5 +9,9 @@ urlpatterns = [
     # 특정 약속에 누군가를 초대하는 주소
     path("<int:event_id>/invite/", EventInviteView.as_view(), name="event_invite"),
     # 특정 약속에서 누군가에게 초대 권한을 주는 주소
-    path("<int:event_id>/grant/", EventGrantPermissionView.as_view(), name="event_grant_permission"),
+    path(
+        "<int:event_id>/grant/",
+        EventGrantPermissionView.as_view(),
+        name="event_grant_permission",
+    ),
 ]
