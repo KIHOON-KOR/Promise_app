@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class EventCreateSerializer(serializers.Serializer):
     """약속 생성을 위해 클라이언트가 보내는 데이터를 검증하는 클래스"""
 
