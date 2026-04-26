@@ -71,21 +71,21 @@ ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
         # 이 DIRS 리스트 안에 BASE_DIR / 'templates'를 추가해야 최상위 폴더의 templates를 인식함
-        'DIRS': [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / "templates"],
         # 각 앱 폴더 내부의 templates 폴더도 자동으로 검색하도록 설정
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
                 # 디버그 정보를 템플릿에서 쓸 수 있게 합니다.
-                'django.template.context_processors.debug',
+                "django.template.context_processors.debug",
                 # 뷰의 request 객체를 템플릿에서 쓸 수 있게 합니다.
-                'django.template.context_processors.request',
+                "django.template.context_processors.request",
                 # 로그인한 유저 정보를 템플릿에서 쓸 수 있게 합니다.
-                'django.contrib.auth.context_processors.auth',
+                "django.contrib.auth.context_processors.auth",
                 # 시스템 메시지 기능을 템플릿에서 쓸 수 있게 합니다.
-                'django.contrib.messages.context_processors.messages',
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },

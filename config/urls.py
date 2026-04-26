@@ -11,7 +11,7 @@ from django.conf.urls.static import static
 from apps.User.views.page_views import home_page
 
 urlpatterns: list[URLPattern | URLResolver] = [
-    path('', home_page, name='home'),
+    path("", home_page, name="home"),
     path("admin/", admin.site.urls),
     path("api/v1/user/", include("apps.User.urls")),
     path("api/v1/event/", include("apps.Event.urls")),

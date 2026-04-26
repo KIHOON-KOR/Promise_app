@@ -11,7 +11,6 @@ urlpatterns = [
     path("login/", UserLoginView.as_view(), name="login"),
     path("logout/", UserLogoutView.as_view(), name="logout"),
     path("withdrawal/", UserWithdrawalView.as_view(), name="withdrawal"),
-
     # 브라우저 접속용
     path("login-page/", login_page, name="login_page"),
     path("signup-page/", signup_page, name="signup_page"),
