@@ -3,6 +3,7 @@ from apps.Event.views.event_create_view import EventCreateView
 from apps.Event.views.event_invite_view import EventInviteView
 from apps.Event.views.event_kick_view import EventKickView
 from apps.Event.views.event_permission_view import EventGrantPermissionView
+from apps.Event.views.page_views import create_promise
 
 urlpatterns = [
     # 약속을 생성하는 주소
@@ -17,4 +18,7 @@ urlpatterns = [
     ),
     # 특정 약속에서 누군가를 강제로 내보내는 주소
     path("<int:event_id>/kick/", EventKickView.as_view(), name="event_kick"),
+
+    # 브라우저 접속용
+    path("create-page/", create_promise, name="create_page"),
 ]
