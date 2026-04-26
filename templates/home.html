@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}홈 - 약속잡이{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-4 fw-bold mb-3" style="color: var(--brand-primary);">쉽고 빠른 약속 관리</h1>
+    <p class="lead text-muted mb-5">친구들을 초대하고, 권한을 나누며, 깔끔하게 일정을 관리하세요.</p>
+
+    <div id="welcome-guest" class="card shadow-sm border-0 mx-auto bg-white" style="max-width: 500px;">
+        <div class="card-body p-5">
+            <i class="bi bi-calendar-event text-secondary mb-3" style="font-size: 4rem;"></i>
+            <h4 class="fw-bold mb-4">지금 바로 시작해보세요</h4>
+
+            <div class="d-grid gap-3">
+                <a href="/api/v1/user/login-page/" class="btn btn-outline-primary btn-lg rounded-pill fw-bold">로그인하기</a>
+                <a href="/api/v1/user/signup-page/" class="btn btn-primary btn-lg rounded-pill fw-bold">새 계정 만들기</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard-user" class="row justify-content-center" style="display: none !important;">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 text-start">
+                <div class="card-body p-4 p-md-5">
+                    <h3 class="fw-bold mb-4"><span id="home-nickname" class="text-primary">사용자</span>님, 환영합니다!</h3>
+
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-primary btn-lg rounded-3 fw-bold text-start p-3 d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-plus-circle me-2"></i> 새로운 약속 만들기</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+
+                        <a href="/api/v1/user/my-page/" class="btn btn-light border btn-lg rounded-3 fw-bold text-start p-3 d-flex justify-content-between align-items-center text-dark text-decoration-none">
+                            <span><i class="bi bi-person me-2"></i> 내 프로필 설정 (마이페이지)</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // HTML 구조가 화면에 모두 그려지면 실행되는 함수입니다.
+    document.addEventListener("DOMContentLoaded", function() {
+        // 브라우저 개인 금고에서 출입증(토큰)과 이름표를 꺼내옵니다.
+        const token = localStorage.getItem('access_token');
+        const nickname = localStorage.getItem('nickname');
+
+        // 꺼낸 출입증이 존재한다면 (로그인에 성공한 사용자라면)
+        if (token) {
+            // 회원가입과 로그인을 권유하는 손님용 카드를 강제로 숨깁니다.
+            document.getElementById('welcome-guest').style.setProperty('display', 'none', 'important');
+            // 약속 관리 버튼이 있는 회원용 대시보드를 화면에 나타나게 합니다.
+            document.getElementById('dashboard-user').style.setProperty('display', 'flex', 'important');
+
+            // 이름표 데이터가 존재한다면
+            if (nickname) {
+                // 환영 인삿말의 닉네임 부분을 내 진짜 이름표로 교체해 줍니다.
+                document.getElementById('home-nickname').innerText = nickname;
+            // 내부 조건문을 닫습니다.
+            }
+        // 출입증이 없는 비회원이라면
+        } else {
+            // 손님용 카드를 화면에 보여줍니다. (기본값이므로 생략 가능하나 명시적 처리)
+            document.getElementById('welcome-guest').style.setProperty('display', 'block', 'important');
+            // 회원용 대시보드는 굳게 숨겨둡니다.
+            document.getElementById('dashboard-user').style.setProperty('display', 'none', 'important');
+        // 조건문을 닫습니다.
+        }
+    // 이벤트 리스너를 닫습니다.
+    });
+// 자바스크립트를 닫습니다.
+</script>
+{% endblock %}

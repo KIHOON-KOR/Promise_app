@@ -62,7 +62,7 @@
         // 통신 중 발생할 수 있는 에러를 안전하게 잡기 위해 예외 처리 블록을 엽니다.
         try {
             // 장고 백엔드의 회원가입 데이터 처리 주소로 비동기 요청을 보냅니다.
-            const response = await fetch('/User/signup/', {
+            const response = await fetch('/api/v1/user/signup/', {
                 // 새로운 데이터를 서버에 생성하므로 POST 방식을 사용합니다.
                 method: 'POST',
                 // 우리가 보내는 데이터가 JSON 규칙을 따른다고 서버에 알립니다.
@@ -80,7 +80,7 @@
                 // 성공 메시지를 띄워 사용자에게 알립니다.
                 alert("회원가입이 완료되었습니다! 로그인해주세요.");
                 // 곧바로 로그인 페이지로 화면을 이동시켜 줍니다.
-                window.location.href = "/login-page/";
+                window.location.href = "/api/v1/user/login-page/";
             // 중복된 아이디 등 백엔드에서 가입 거절(400번대 응답)을 한 경우입니다.
             } else {
                 // 서버가 보내준 구체적인 거절 사유를 팝업으로 띄워줍니다.

@@ -50,7 +50,7 @@
             // 통신 에러를 잡기 위한 예외 처리 블록을 엽니다.
             try {
                 // 장고 백엔드의 탈퇴 전용 주소로 비동기 통신을 보냅니다.
-                const response = await fetch('/User/withdrawal/', {
+                const response = await fetch('/api/v1/user/withdrawal/', {
                     // 데이터베이스에서 정보를 지우는 목적이므로 DELETE 방식을 사용합니다.
                     method: 'DELETE',
                     // 내가 누구인지 증명하기 위해 헤더에 출입증을 달아줍니다.

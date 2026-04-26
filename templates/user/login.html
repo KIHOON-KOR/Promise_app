@@ -59,7 +59,7 @@
         // 네트워크 통신 중 에러를 대비하여 try 블록을 엽니다.
         try {
             // 이번 프로젝트의 로그인 백엔드 주소인 '/User/login/'으로 요청을 보냅니다.
-            const response = await fetch('/User/login/', {
+            const response = await fetch('/api/v1/user/login/', {
                 // 데이터를 생성/전달하는 POST 방식을 설정합니다.
                 method: 'POST',
                 // 서버에 JSON 형태의 데이터가 넘어감을 알려줍니다.

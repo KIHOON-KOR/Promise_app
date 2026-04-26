@@ -56,8 +56,8 @@
                 <ul class="navbar-nav ms-auto align-items-center">
 
                     <div id="guest-menu" class="d-flex align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="/login/">로그인</a></li>
-                        <li class="nav-item"><a class="btn btn-primary btn-sm ms-2" href="/signup/">회원가입</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/api/v1/user/login-page/">로그인</a></li>
+                        <li class="nav-item"><a class="btn btn-primary btn-sm ms-2" href="/api/v1/user/signup-page/">회원가입</a></li>
                     </div>
 
                     <div id="user-menu" class="d-flex align-items-center" style="display: none !important;">
@@ -138,7 +138,7 @@
                 // 토큰 통신 과정에서 오류가 날 것을 대비해 예외 처리 블록을 엽니다.
                 try {
                     // 백엔드의 로그아웃 API 주소로 요청을 보냅니다.
-                    await fetch('/User/logout/', {
+                    await fetch('/api/v1/user/logout/', {
                         // 데이터를 전송하는 POST 방식을 사용합니다.
                         method: 'POST',
                         // 서버가 이해할 수 있도록 JSON 형식임을 알리고 엑세스 토큰을 헤더에 담습니다.
