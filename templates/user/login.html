@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}로그인 - 약속잡이{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="card shadow-sm border-0" style="width: 100%; max-width: 400px; border-radius: 1rem;">
+        <div class="card-body p-5">
+
+            <h3 class="fw-bold text-center mb-4" style="color: var(--brand-primary);">약속잡이 로그인</h3>
+
+            <form id="loginForm">
+
+                <div class="mb-3">
+                    <label for="username" class="form-label text-muted small fw-bold">아이디</label>
+                    <input type="text" class="form-control form-control-lg" id="username" placeholder="아이디 입력" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label text-muted small fw-bold">비밀번호</label>
+                    <input type="password" class="form-control form-control-lg" id="password" placeholder="비밀번호 입력" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold mb-3" style="border-radius: 0.5rem;">
+                    로그인
+                </button>
+
+            </form>
+
+            <div class="text-center mt-3">
+                <span class="text-muted small">계정이 없으신가요? </span>
+                <a href="/signup/" class="text-decoration-none fw-bold" style="color: var(--brand-primary);">회원가입</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 폼 요소에 'submit'(제출) 이벤트가 발생했을 때 비동기 함수를 실행하도록 연결합니다.
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        // 브라우저가 폼을 전송하며 화면을 새로고침하는 기본 동작을 막아줍니다.
+        e.preventDefault();
+
+        // 사용자가 입력한 아이디 값을 HTML 요소에서 가져옵니다.
+        const username = document.getElementById('username').value;
+        // 사용자가 입력한 비밀번호 값을 HTML 요소에서 가져옵니다.
+        const password = document.getElementById('password').value;
+        // 클릭된 로그인 버튼 요소를 가져옵니다.
+        const submitBtn = this.querySelector('button[type="submit"]');
+
+        // 로딩 중임을 알리기 위해 버튼 텍스트를 바꿉니다.
+        submitBtn.innerText = '처리 중...';
+        // 중복해서 요청을 보내지 못하도록 버튼을 비활성화합니다.
+        submitBtn.disabled = true;
+
+        // 네트워크 통신 중 에러를 대비하여 try 블록을 엽니다.
+        try {
+            // 이번 프로젝트의 로그인 백엔드 주소인 '/User/login/'으로 요청을 보냅니다.
+            const response = await fetch('/User/login/', {
+                // 데이터를 생성/전달하는 POST 방식을 설정합니다.
+                method: 'POST',
+                // 서버에 JSON 형태의 데이터가 넘어감을 알려줍니다.
+                headers: { 'Content-Type': 'application/json' },
+                // 추출한 아이디와 비밀번호를 딕셔너리 형태로 묶은 뒤, JSON 문자열로 변환하여 본문에 싣습니다.
+                body: JSON.stringify({ username: username, password: password })
+            // fetch 함수를 닫습니다.
+            });
+
+            // 서버가 응답한 데이터를 자바스크립트 객체로 변환합니다.
+            const data = await response.json();
+
+            // 백엔드에서 정상적으로 처리되어 응답 코드가 200번대인 경우입니다.
+            if (response.ok) {
+                // 로컬 스토리지에 발급받은 엑세스 토큰을 저장합니다.
+                localStorage.setItem('access_token', data.access);
+                // 로컬 스토리지에 리프레시 토큰을 저장합니다.
+                localStorage.setItem('refresh_token', data.refresh);
+                // 백엔드 명세에는 응답에 닉네임이 없으므로, 임시로 아이디를 닉네임처럼 저장합니다.
+                localStorage.setItem('nickname', username);
+
+                // 로그인이 성공적으로 완료되었으므로 메인 페이지로 이동합니다.
+                window.location.href = "/";
+            // 서버에서 로그인 거절 등의 400번대 응답을 보낸 경우입니다.
+            } else {
+                // 백엔드가 전달한 에러 메시지(아이디 또는 비밀번호가 잘못되었습니다.)를 띄웁니다.
+                alert(data.message || "로그인에 실패했습니다.");
+                // 버튼 텍스트를 원래대로 되돌립니다.
+                submitBtn.innerText = '로그인';
+                // 버튼을 다시 누를 수 있게 활성화합니다.
+                submitBtn.disabled = false;
+            // 조건문을 닫습니다.
+            }
+        // 예외 상황(서버가 꺼져있거나 통신 두절 등)을 잡는 catch 블록입니다.
+        } catch (error) {
+            // 사용자에게 서버와 연결할 수 없음을 알립니다.
+            alert("서버와 통신할 수 없습니다.");
+            // 버튼 상태를 원래대로 복구합니다.
+            submitBtn.innerText = '로그인';
+            submitBtn.disabled = false;
+        // 예외 처리 블록을 닫습니다.
+        }
+    // 이벤트 리스너를 닫습니다.
+    });
+// 자바스크립트 코드를 닫습니다.
+</script>
+{% endblock %}
