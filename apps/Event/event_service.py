@@ -2,6 +2,7 @@ from apps.Event.models import Event
 from apps.EventMember.models import EventMember
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 
 class EventService:
@@ -83,3 +84,18 @@ class EventQueryService:
         # 2. 전달받은 아이디로 약속을 찾고, 없으면 에러를 발생시킴
         event = get_object_or_404(Event, id=event_id)
         return event
+
+    # 1. 객체 생성 없이 메서드를 바로 사용할 수 있도록 데코레이터
+    @staticmethod
+    def get_all_user_events(user):
+        """사용자가 방장이거나 멤버로 참여 중인 모든 약속을 찾는 함수"""
+        # 2. host가 나인 경우 OR 2. 멤버 목록(eventmember)에 내가 포함된 경우를 모두 찾기
+        return (
+            Event.objects.filter(
+                # 3. OR 조건을 처리하기 위해 장고의 Q 객체 사용
+                Q(host=user)
+                | Q(members__user=user)
+            )
+            .distinct()
+            .order_by("-created_at")
+        )
