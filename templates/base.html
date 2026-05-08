@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}약속잡이{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        /* 문서 전체에 적용될 공통 색상 변수를 파란색 계열로 선언합니다. */
+        :root {
+            /* 메인 브랜드 색상입니다. */
+            --brand-primary: #0d6efd;
+            /* 마우스를 올렸을 때 보여질 조금 더 어두운 색상입니다. */
+            --brand-hover: #0b5ed7;
+        }
+
+        /* 웹페이지의 바탕이 되는 body 태그의 스타일입니다. */
+        body {
+            /* 배경색을 아주 옅은 회색으로 설정하여 부드러운 느낌을 줍니다. */
+            background-color: #f8f9fa;
+            /* 최소 높이를 브라우저 화면 크기로 맞춰 내용이 적어도 꽉 차 보이게 합니다. */
+            min-height: 100vh;
+            /* 요소들을 유연하게 배치하기 위해 플렉스박스 모델을 사용합니다. */
+            display: flex;
+            /* 요소들을 위에서 아래로(세로 방향) 배치합니다. */
+            flex-direction: column;
+        }
+
+        /* 네비게이션 바를 하얀색 바탕에 옅은 그림자로 꾸밉니다. */
+        .navbar { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        /* 로고 글씨를 두껍고 메인 색상으로 설정합니다. */
+        .navbar-brand { color: var(--brand-primary) !important; font-weight: 700; }
+
+        /* 메인 콘텐츠가 들어갈 영역이 남은 공간을 모두 차지하도록 설정합니다. */
+        .main-container { flex: 1; padding: 2rem 0; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-calendar-check me-2"></i>
+                약속잡이
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+
+                    <div id="guest-menu" class="d-flex align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="/api/v1/user/login-page/">로그인</a></li>
+                        <li class="nav-item"><a class="btn btn-primary btn-sm ms-2" href="/api/v1/user/signup-page/">회원가입</a></li>
+                    </div>
+
+                    <div id="user-menu" class="d-flex align-items-center" style="display: none !important;">
+                        <li class="nav-item me-3 text-secondary small">
+                            안녕하세요, <strong id="user-nickname" class="text-dark">User</strong>님
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-secondary btn-sm" href="#" onclick="handleLogout()">로그아웃</a>
+                        </li>
+                    </div>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // HTML 문서의 렌더링이 끝나면 중괄호 안의 코드를 실행합니다.
+        document.addEventListener("DOMContentLoaded", function() {
+            // 로그인 상태를 검사하여 메뉴를 바꿔주는 함수를 호출합니다.
+            checkLoginStatus();
+        // 이벤트 리스너를 닫습니다.
+        });
+
+        // 로컬 스토리지를 확인하여 UI를 변경하는 함수입니다.
+        function checkLoginStatus() {
+            // 브라우저 저장소에서 엑세스 토큰을 꺼내옵니다.
+            const token = localStorage.getItem('access_token');
+            // 브라우저 저장소에서 사용자 닉네임을 꺼내옵니다.
+            const nickname = localStorage.getItem('nickname');
+
+            // 게스트용 메뉴 요소를 문서에서 찾습니다.
+            const guestMenu = document.getElementById('guest-menu');
+            // 유저용 메뉴 요소를 문서에서 찾습니다.
+            const userMenu = document.getElementById('user-menu');
+            // 닉네임이 들어갈 요소를 문서에서 찾습니다.
+            const nicknameElement = document.getElementById('user-nickname');
+
+            // 토큰이 존재한다면 (로그인 상태라면)
+            if (token) {
+                // 게스트 메뉴를 화면에서 숨깁니다.
+                guestMenu.style.setProperty('display', 'none', 'important');
+                // 유저 메뉴를 화면에 보여줍니다.
+                userMenu.style.setProperty('display', 'flex', 'important');
+
+                // 닉네임 데이터가 있고 요소도 잘 찾았다면
+                if (nickname && nicknameElement) {
+                    // 해당 요소의 글자를 내 닉네임으로 바꿉니다.
+                    nicknameElement.innerText = nickname;
+                // 조건문을 닫습니다.
+                }
+            // 토큰이 존재하지 않는다면 (비로그인 상태라면)
+            } else {
+                // 게스트 메뉴를 화면에 보여줍니다.
+                guestMenu.style.setProperty('display', 'flex', 'important');
+                // 유저 메뉴를 화면에서 숨깁니다.
+                userMenu.style.setProperty('display', 'none', 'important');
+            // 조건문을 닫습니다.
+            }
+        // 함수를 닫습니다.
+        }
+
+        // 로그아웃 버튼을 눌렀을 때 실행될 비동기 함수입니다.
+        async function handleLogout() {
+            // 브라우저 기본 알림창으로 정말 로그아웃 할지 묻습니다.
+            if (confirm("정말 로그아웃 하시겠습니까?")) {
+                // 저장소에서 리프레시 토큰을 꺼내옵니다.
+                const refreshToken = localStorage.getItem('refresh_token');
+                // 저장소에서 엑세스 토큰을 꺼내옵니다.
+                const accessToken = localStorage.getItem('access_token');
+
+                // 토큰 통신 과정에서 오류가 날 것을 대비해 예외 처리 블록을 엽니다.
+                try {
+                    // 백엔드의 로그아웃 API 주소로 요청을 보냅니다.
+                    await fetch('/api/v1/user/logout/', {
+                        // 데이터를 전송하는 POST 방식을 사용합니다.
+                        method: 'POST',
+                        // 서버가 이해할 수 있도록 JSON 형식임을 알리고 엑세스 토큰을 헤더에 담습니다.
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + accessToken
+                        },
+                        // 블랙리스트 처리를 위해 리프레시 토큰을 본문에 담아 보냅니다.
+                        body: JSON.stringify({ refresh: refreshToken })
+                    // fetch 괄호를 닫습니다.
+                    });
+                // 오류가 발생하면 에러를 잡아냅니다.
+                } catch (error) {
+                    // 콘솔에 통신 에러를 출력합니다.
+                    console.error('Logout error:', error);
+                // 예외 처리 블록을 닫습니다.
+                } finally {
+                    // 서버 통신 성공 여부와 상관없이 내 브라우저의 인증 정보를 지웁니다.
+                    localStorage.removeItem('access_token');
+                    // 리프레시 토큰도 지웁니다.
+                    localStorage.removeItem('refresh_token');
+                    // 닉네임 정보도 지웁니다.
+                    localStorage.removeItem('nickname');
+
+                    // 사용자에게 로그아웃 완료 메시지를 띄웁니다.
+                    alert("로그아웃 되었습니다.");
+                    // 초기 화면이나 로그인 화면으로 페이지를 강제 이동시킵니다.
+                    window.location.href = "/";
+                // finally 블록을 닫습니다.
+                }
+            // confirm 조건문을 닫습니다.
+            }
+        // 함수를 닫습니다.
+        }
+    // 자바스크립트 영역을 닫습니다.
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}마이페이지 - 약속잡이{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 mt-5 rounded-4">
+            <div class="card-header text-white text-center py-4" style="background-color: var(--brand-primary);">
+                <h4 class="mb-0 fw-bold">마이페이지</h4>
+            </div>
+
+            <div class="card-body p-5 text-center">
+                <i class="bi bi-person-circle text-secondary mb-3" style="font-size: 5rem;"></i>
+
+                <h3 id="profile-nickname" class="fw-bold mb-1">사용자</h3>
+                <p class="text-muted mb-5">약속잡이 일반 회원</p>
+
+                <button id="withdrawBtn" class="btn btn-outline-danger w-100 fw-bold py-2 rounded-pill">
+                    회원 탈퇴하기
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 문서 렌더링이 끝나면 중괄호 안의 내용을 즉시 실행합니다.
+    document.addEventListener("DOMContentLoaded", function() {
+        // 브라우저의 개인 금고에서 사용자의 이름표(닉네임)를 꺼냅니다.
+        const nickname = localStorage.getItem('nickname');
+        // 꺼낸 이름표가 존재한다면
+        if (nickname) {
+            // 화면의 프로필 닉네임 공간에 내 이름을 예쁘게 적어줍니다.
+            document.getElementById('profile-nickname').innerText = nickname;
+        // 조건문을 닫습니다.
+        }
+    // 시작 이벤트를 닫습니다.
+    });
+
+    // 회원탈퇴 버튼을 찾아 클릭 시 발생하는 이벤트를 연결합니다.
+    document.getElementById('withdrawBtn').addEventListener('click', async function() {
+        // 브라우저의 기본 알림창을 띄워 사용자에게 마지막으로 진짜 탈퇴할 것인지 묻습니다.
+        if (confirm("정말 약속잡이를 탈퇴하시겠습니까? 데이터가 삭제됩니다.")) {
+            // 개인 금고에서 장고 백엔드로 향하는 출입증(엑세스 토큰)을 꺼냅니다.
+            const token = localStorage.getItem('access_token');
+
+            // 통신 에러를 잡기 위한 예외 처리 블록을 엽니다.
+            try {
+                // 장고 백엔드의 탈퇴 전용 주소로 비동기 통신을 보냅니다.
+                const response = await fetch('/api/v1/user/withdrawal/', {
+                    // 데이터베이스에서 정보를 지우는 목적이므로 DELETE 방식을 사용합니다.
+                    method: 'DELETE',
+                    // 내가 누구인지 증명하기 위해 헤더에 출입증을 달아줍니다.
+                    headers: { 'Authorization': 'Bearer ' + token }
+                // fetch 함수를 닫습니다.
+                });
+
+                // 서버에서 탈퇴가 무사히 승인되었다면 (성공 코드 200번대)
+                if (response.ok) {
+                    // 탈퇴 완료 메시지를 띄웁니다.
+                    alert("회원 탈퇴가 완료되었습니다. 그동안 감사했습니다.");
+                    // 더 이상 쓸모없어진 브라우저 금고 속 출입증과 이름표를 모두 파기합니다.
+                    localStorage.clear();
+                    // 서비스의 제일 처음 화면인 메인 페이지로 쫓아냅니다.
+                    window.location.href = "/";
+                // 서버에서 권한 없음 등으로 탈퇴를 거절했다면
+                } else {
+                    // 탈퇴 실패 알림을 띄웁니다.
+                    alert("탈퇴 처리에 실패했습니다. 다시 로그인 후 시도해주세요.");
+                // 조건문을 닫습니다.
+                }
+            // 인터넷 연결 문제 등 심각한 예외 상황이 발생했다면
+            } catch (error) {
+                // 팝업창으로 서버 오류를 알립니다.
+                alert("서버와 통신할 수 없습니다.");
+            // 예외 처리 블록을 닫습니다.
+            }
+        // 사용자가 확인을 누른 경우의 조건을 닫습니다.
+        }
+    // 이벤트 연결을 마칩니다.
+    });
+// 자바스크립트를 닫습니다.
+</script>
+{% endblock %}

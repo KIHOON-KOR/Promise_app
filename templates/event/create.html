@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}새 약속 만들기 - 약속잡이{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-5">
+                <h3 class="fw-bold mb-4" style="color: var(--brand-primary);">
+                    <i class="bi bi-plus-circle-fill me-2"></i>새로운 약속 만들기
+                </h3>
+
+                <form id="createEventForm">
+                    <div class="mb-3">
+                        <label for="title" class="form-label text-muted small fw-bold">약속 제목</label>
+                        <input type="text" class="form-control form-control-lg" id="title" placeholder="예: 팀 프로젝트 회의" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_business">
+                            <label class="form-check-label text-muted" for="is_business">비즈니스 관련 약속인가요?</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold rounded-3">
+                        약속 생성하기
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('createEventForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const title = document.getElementById('title').value;
+        // 체크박스의 체크 여부를 참/거짓으로 가져옵니다.
+        const is_business = document.getElementById('is_business').checked;
+        const token = localStorage.getItem('access_token');
+
+        try {
+            // 장고 백엔드의 약속 생성 API 주소로 데이터를 보냅니다.
+            const response = await fetch('/api/v1/event/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ title: title, is_business: is_business })
+            });
+
+            if (response.ok) {
+                alert("약속이 성공적으로 생성되었습니다!");
+                // 생성 후 메인 화면으로 이동합니다.
+                window.location.href = "/";
+            } else {
+                alert("약속 생성에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert("서버와 통신할 수 없습니다.");
+        }
+    });
+</script>
+{% endblock %}
