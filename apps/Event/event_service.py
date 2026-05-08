@@ -71,3 +71,15 @@ class EventMemberService:
             target_member.delete()
             return True
         return False
+
+
+class EventQueryService:
+    """약속 조회를 전담할 서비스 클래스"""
+
+    # 1. 객체 생성 없이 메서드를 바로 사용할 수 있도록 데코레이터
+    @staticmethod
+    def get_event(event_id):
+        """조회할 약속의 고유 아이디를 전달받는 함수"""
+        # 2. 전달받은 아이디로 약속을 찾고, 없으면 에러를 발생시킴
+        event = get_object_or_404(Event, id=event_id)
+        return event
