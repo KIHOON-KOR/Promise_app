@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -179,3 +180,10 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # 정적 파일들이 모일 폴더 위�
 # Media files (사용자가 업로드하는 파일들)
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"  # 사용자가 업로드한 파일이 저장될 위치를 지정합니다.
+
+SIMPLE_JWT = {
+    # 개발의 편의를 위해 엑세스 토큰의 수명을 1일로 넉넉하게 늘립니다.
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    # 리프레시 토큰의 수명은 7일로 설정합니다.
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}
